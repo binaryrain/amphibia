@@ -1,0 +1,20 @@
+[_=igoTextarea] {
+  border: 1px #999 solid;
+  display: block;
+}
+[_=igoTextarea][disabled] {
+  pointer-events: auto;
+}
+[_=igoTextarea] textarea {
+  height: 100%;
+  width: 100%;
+  text-indent: 3px;
+  border: none;
+  outline: none;
+  color: inherit;
+  resize: none;
+}
+[_=igoTextarea].error_field  {
+  color: #f00;
+  border: 1px solid #f00;
+}

@@ -1,0 +1,61 @@
+@import './constant.less';
+@import './common.less';
+
+@background: #337ab7;
+
+body {
+	font-size: 14px;
+	line-height: 1.4;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.igo-header {
+	height: 40px;
+	line-height: 40px;
+	background-color: @background;
+	color: #fff;
+
+	span {
+		margin: 10px;
+		vertical-align: top;
+		font-weight: bold;
+	}
+
+	[_=igoMenu] {
+		height: 100%;
+		border: 1px #fff;
+		border-left-style: solid;
+		margin-left: 10px;
+	}
+}
+
+.igo-content {
+	flex: 1;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+
+	h1 {
+		text-transform: uppercase;
+	}
+}
+
+.igo-footer {
+	position: relative;
+	padding: 0 10px;
+	height: 40px;
+	padding-top: 10px;
+	background-color: @background;
+	color: #fff;
+
+	.powered {
+		position: absolute;
+		background: url("@{images}/indigo.png") no-repeat right center;
+		top: 0;
+		right: 10px;
+		padding: 10px 30px;
+		color: #fff;
+	}
+}

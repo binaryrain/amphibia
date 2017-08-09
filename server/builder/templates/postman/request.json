@@ -1,0 +1,17 @@
+				{
+					"name": "<% NAME %>",
+					"id": "<% ID %>",
+					"collectionId": "10000000-0000-0000-0000-000000000000",
+					"method": "<% METHOD %>",
+					"headers": "<% HEADERS %>",
+					"url": "<% ENDPOINT %>/<% PATH %>",
+					"data": "<% BODY %>",
+					"preRequestScript": null,
+					"pathVariables": {},
+					"pathVariableData": [],
+					"dataMode": "raw",
+					"version": 2,
+					"tests": null,
+					"currentHelper": "normal",
+					"responses": []
+				}

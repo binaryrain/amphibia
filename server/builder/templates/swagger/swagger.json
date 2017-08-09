@@ -1,0 +1,28 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "<% PROJECT_NAME %>",
+		"description": "<% PROJECT_NAME %> Project"
+	},
+	"host": "<% ENDPOINT %>",
+	"securityDefinitions": {},
+	"schemes": [
+		"<% SCHEME %>"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+<% PATHS %>
+	},
+	"parameters": {
+<% PARAMETERS %>
+	},
+	"definitions": {
+<% DEFINITIONS %>
+	}
+}

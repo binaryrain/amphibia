@@ -1,0 +1,13 @@
+{
+	"pageTitle": "Amphibia",
+	"copyright": "Copyright 2017",
+	"step1": "Step 1: Import Swagger",
+	"step2": "Step 2: Export IDE's",
+	"step3": "Step 3: Run Test scenarios",
+	"option1": "Option 1",
+	"option2": "Option 2",
+	"submit": "Submit",
+
+	"url": "Swagger URL",
+	"uploadFile": "Upload Swagger File"
+}

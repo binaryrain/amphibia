@@ -1,0 +1,33 @@
+{
+	"name": "indigojs-components",
+	"version": "v3.5.8",
+	"config": {
+		"old_tag": "v3.5.7",
+		"new_tag": "v3.5.8"
+	},
+	"scripts": {
+		"start": "node server.js",
+		"jshint": "./node_modules/.bin/jshint . --config .jshintrc",
+		"cover": "./node_modules/.bin/istanbul cover  test/testsuite.js --reporter spec --check-leaks",
+		"unix_remove_tag": "git push --delete origin $npm_package_config_old_tag && git tag --delete $npm_package_config_old_tag",
+		"unix_create_tag": "git tag $npm_package_config_new_tag && git push origin --tags",
+		"win_remove_tag": "git push --delete origin %npm_package_config_old_tag% && git tag --delete %npm_package_config_old_tag%",
+		"win_create_tag": "git tag %npm_package_config_new_tag% && git push origin --tags",
+		"bower_register": "bower register indigojs-components https://github.com/dgofman/indigojs-components.git",
+		"bower_unregister": "bower unregister indigojs-components && bower cache clean",
+		"postinstall": "grunt all"
+	},
+	"dependencies": {
+		"opn": "latest",
+		"jshint": "latest",
+		"grunt": "latest",
+		"uglify-js": "latest",
+		"grunt-contrib-less": "latest",
+		"babel-core": "latest",
+		"babel-plugin-transform-es2015-template-literals": "latest",
+		"jquery-ui": "git+https://github.com/jquery/jquery-ui.git"
+	},
+	"devDependencies": {
+		"istanbul": "latest"
+	}
+}

@@ -1,0 +1,12 @@
+<%
+	var uid = `chk_${componentIndex}`;
+
+	if (opts.header) {
+%>
+<header><%- opts.header %></header>
+<%
+	}
+%>
+<input type="checkbox" id="<%- uid %>"<%- $title() %><%- $get('checked', 'checked') %><%- $get('disabled', 'disabled') %>/>
+<label unselectable="on" for="<%- uid %>"><%- opts.label %></label>
+<div<%- $attr('template') %>><%- opts.content %></div>

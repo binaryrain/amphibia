@@ -1,0 +1,14 @@
+<%
+	opts.contents = opts.contents || {};
+	opts.templates = opts.templates || {};
+	(opts.labels || []).forEach(function(label, index) {
+		var content = opts.contents[index],
+			template = opts.templates[index];
+		content = content ? (typeof content === 'function' ? content(opts) : content) : '';
+%>
+	<h3><%- label %></h3>
+	<div<%- template ? ` template="${template}"` : '' %>><%- content %></div>
+<%
+	});
+%>
+<input type="hidden" value="<%- opts.selectedIndex || 0 %>"/>

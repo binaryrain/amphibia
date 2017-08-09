@@ -1,0 +1,29 @@
+{
+  "name": "components",
+  "authors": [
+    "David Gofman <dgofman@gmail.com>"
+  ],
+  "description": "IndigoJS components",
+  "license": "MIT",
+  "homepage": "http://www.inidgojs.com",
+  "ignore": [
+    "*",
+    "!igo/**/*",
+    "!jui/**/*",
+    "!js/**/*",
+    "!less/**/*",
+    "!Gruntfile.js",
+    "!package.json"
+  ],
+  "version": "3.5.8",
+  "_release": "3.5.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.5.8",
+    "commit": "d69350286ed4964523dc24e37305d5253904454f"
+  },
+  "_source": "https://github.com/dgofman/indigojs-components.git",
+  "_target": "^3.5.8",
+  "_originalSource": "indigojs",
+  "_direct": true
+}

@@ -1,0 +1,16 @@
+# Project Specifics #
+#####################
+.project
+node_modules
+npm-debug.log
+logs
+coverage
+tmp
+/web/static/js/**/*.min.js
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

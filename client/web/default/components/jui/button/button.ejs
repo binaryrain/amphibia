@@ -1,0 +1,7 @@
+<button<%- $title() %><%- $attr('style') %><%- $attrs('attrs') %><%- $attr('disabled', 'disabled') %>><% 
+	if ((opts.icon_class || opts.icon) && opts.icon_align !== 'right') {
+%><span class="ui-icon<%- $get('icon_class') %>"<%- $get('icon', `style="background-image: url('${opts.icon}')"`) %>></span><%- opts.label %><%
+	} else if ((opts.icon_class || opts.icon) && opts.icon_align === 'right') {
+%><%- opts.label %><span class="ui-icon<%- $get('icon_class') %>"<%- $get('icon', `style="background-image: url('${opts.icon}')"`) %>></span><%
+	} else {
+%><%- opts.label %><% } %></button>

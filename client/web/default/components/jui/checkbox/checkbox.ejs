@@ -1,0 +1,5 @@
+<%
+	var uid = `checkbox_${componentIndex}`;
+%>
+<label unselectable="on" for="<%- uid %>"<%- $attr('style') %><%- $get('disabled', 'disabled') %>><%- opts.label %></label>
+<input type="checkbox" id="<%- uid %>"<%- $title() %><%- $get('checked', 'checked') %><%- $get('disabled', 'disabled') %>/>

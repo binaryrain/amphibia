@@ -1,0 +1,26 @@
+[_=igoFile] {
+  outline: none;
+}
+[_=igoFile] > label {
+  border-bottom: 1px dotted;
+  color: #0066cc;
+  cursor: pointer;
+}
+[_=igoFile][disabled] > label {
+  color: #aaa !important;
+}
+[_=igoFile] > input {
+  display: none;
+}
+[_=igoFile].icon:before {
+  width: 16px;
+  height: 16px;
+  content: '';
+  display: inline-block;
+  margin: 2px 5px 0 0;
+  vertical-align: top;
+}
+[_=igoFile].error_field  {
+  color: #f00;
+  border: 1px solid #f00;
+}

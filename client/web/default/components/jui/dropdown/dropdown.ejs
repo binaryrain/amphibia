@@ -1,0 +1,70 @@
+<%
+	var label = '',
+		labelField = opts.labelField || 'label',
+		dataField = opts.dataField || '',
+		menus = opts.menus || [],
+		selectedIndex = isNaN(opts.selectedIndex) ? -1 : opts.selectedIndex,
+		defaultItemRenderer = '<option>%LABEL%</option>',
+		itemRenderer = orgItemRenderer = opts.itemRenderer,
+		labelRenderer = orgLabelRenderer = opts.labelRenderer,
+		item, options = [];
+
+		if (opts.prompt) {
+			options.push(`<option disabled selected>${opts.prompt}</option>`);
+		}
+		if (menus.length === 0) {
+			options.push(`<option>&nbsp;</option>`);
+		}
+
+		if (typeof itemRenderer === 'string') {
+			itemRenderer = function() {
+				return orgItemRenderer;
+			}
+		}
+		if (typeof labelRenderer === 'string') {
+			labelRenderer = function() {
+				return orgLabelRenderer;
+			}
+		}
+
+	menus.forEach(function(menu, index) {
+		if (typeof menu === 'string') {
+			var item = {};
+			item[labelField] = menu;
+			menu = item;
+		}
+		$assign(menu);
+
+		if (itemRenderer) {
+			item = itemRenderer(menu, opts, defaultItemRenderer, index);
+		} else {
+			item = defaultItemRenderer;
+		}
+		if (menu.selected) {
+			if (labelRenderer) {
+				label = labelRenderer(menu, opts, defaultItemRenderer, index).replace('%LABEL%', menu[labelField]);
+			} else {
+				label = menu[labelField] || menus[index] || '';
+			}
+			selectedIndex = index;
+		}
+
+		var selected = '';
+		if (selectedIndex === index) {
+			selected = ' selected';
+		}
+		options.push(item.replace('<option', '<option' + selected).replace('%LABEL%', menu[labelField]).replace('%DATA%', menu[dataField]));
+	});
+
+	if (label == '' && menus.length > selectedIndex && selectedIndex !== -1) {
+		var menu = menus[selectedIndex] || {};
+		if (labelRenderer) {
+			label = labelRenderer(menu, opts, defaultItemRenderer).replace('%LABEL%', menu[labelField]);
+		} else {
+			label = menu[labelField] || menus[selectedIndex] || '';
+		}
+	}
+%>
+<select tabindex="-1"<%- selectedIndex !== -1 ? ` selectedIndex="${selectedIndex}"` : '' %><%- $attr('disabled', 'disabled') %>>
+	<%- options.join(''); %>
+</select>

@@ -1,0 +1,26 @@
+{
+	"environment": "dev",
+
+	"server": {
+		"port": 8125,
+		"webdir": "/web",
+		"app_template": "fpa",
+		"staticDir": "/static", /* path to the web/static directory */
+		"componentPath": "/component", /* base path which loads component resource file */
+		"buildPath": "/build",
+		"cache": 3600 /* seconds, 0 - no-cache */
+	},
+
+	"locales": {
+		"default": "en",
+		"path": "/locales",
+		"monitor": 0 /* check file changes in seconds, 0 - no monitoring */
+	},
+
+	"routers": [
+		"/routers"
+	],
+
+	"modules": [
+	]
+}

@@ -1,0 +1,68 @@
+[_=igoTogglebox] {
+  width: 100%;
+  border: 1px solid #999;
+  border-radius: 5px;
+  outline: none;
+}
+[_=igoTogglebox] > label,
+[_=igoTogglebox] > header {
+  height: 36px;
+}
+[_=igoTogglebox] header {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+[_=igoTogglebox] > label {
+  width: 100%;
+  padding: 10px;
+  background: #5b87ac;
+  color: #fff;
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* IE 6-9 unselectable="on" */
+  cursor: pointer;
+}
+[_=igoTogglebox] > label:before {
+  color: #000;
+  content: '\25BA';
+  width: 20px;
+  display: inline-block;
+}
+[_=igoTogglebox] > input {
+  display: none;
+}
+[_=igoTogglebox] > input:after {
+  content: attr(value);
+  margin: -3px 15px;
+  vertical-align: top;
+  display: inline-block;
+  white-space: nowrap;
+  cursor: pointer;
+}
+[_=igoTogglebox] > input:checked ~ * .toggle-content,
+[_=igoTogglebox] > input:checked ~ div[template] {
+  max-height: 500px;
+  transition: max-height 0.5s ease-in;
+}
+[_=igoTogglebox] > input:not(:checked) ~ * .toggle-content {
+  padding: 0;
+  transition: 0.4s padding ease-out;
+}
+[_=igoTogglebox] > input:checked ~ label:before {
+  content: '\25BC';
+}
+[_=igoTogglebox] .toggle-content,
+[_=igoTogglebox] > div[template] {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease-out;
+}
+[_=igoTogglebox].error_field  {
+  border: 1px solid #f00;
+}

@@ -1,0 +1,67 @@
+[_=igoCheckbox] {
+  outline: none;
+}
+[_=igoCheckbox] > label {
+  padding: 0;
+  text-indent: 20px;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* IE 6-9 unselectable="on" */
+}
+[_=igoCheckbox][disabled] > label > u {
+  color: #aaa !important;
+}
+[_=igoCheckbox][disabled] > label input + i:before {
+  border-color: #ccc;
+}
+[_=igoCheckbox] input {
+  position: absolute;
+  opacity: 0;
+  overflow: hidden;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+[_=igoCheckbox] i:before,
+[_=igoCheckbox] i:after {
+  content: '\00a0';
+  display: inline-block;
+  font-size: 14px !important;
+  line-height: 18px;
+  height: 18px;
+  width: 18px;
+  text-indent: 0;
+  margin: -1px 5px 0 -20px;
+  vertical-align: top;
+  text-align: center;
+  padding-right: 3px;
+  font-weight: bold;
+  position: absolute;
+  color: #0d76d0;
+}
+[_=igoCheckbox] i:after {
+  border: 1px solid #666;
+  border-radius: 4px;
+}
+[_=igoCheckbox] input:checked + i:before {
+  content: '\2713';
+}
+[_=igoCheckbox] .partial input:checked + i:before {
+  background: #0d76d0;
+  border: 5px solid #fff;
+  content: '\00a0';
+}
+[_=igoCheckbox] u {
+  text-decoration: none;
+  padding-left: 4px;
+}
+[_=igoCheckbox].error_field >label>u {
+  color: #f00;
+}

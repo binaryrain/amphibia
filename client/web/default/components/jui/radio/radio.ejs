@@ -1,0 +1,5 @@
+<%
+	var uid = `radio_${componentIndex}`;
+%>
+<label unselectable="on" for="<%- uid %>"<%- $attr('style') %><%- $get('disabled', 'disabled') %>><%- opts.label %></label>
+<input type="radio" id="<%- uid %>"<%- $attr('group', 'name') %><%- $title() %><%- $get('checked', 'checked') %><%- $get('disabled', 'disabled') %><%- $attr('value') %>/>

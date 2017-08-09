@@ -1,0 +1,8 @@
+.idea
+*.log
+server/.settings
+server/target/*
+server/Reports
+server/ext
+server/bin
+server/projects/*

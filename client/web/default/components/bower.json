@@ -1,0 +1,18 @@
+{
+	"name": "components",
+	"authors": [
+		"David Gofman <dgofman@gmail.com>"
+	],
+	"description": "IndigoJS components",
+	"license": "MIT",
+	"homepage": "http://www.inidgojs.com",
+	"ignore": [
+		"*",
+		"!igo/**/*",
+		"!jui/**/*",
+		"!js/**/*",
+		"!less/**/*",
+		"!Gruntfile.js",
+		"!package.json"
+	]
+}

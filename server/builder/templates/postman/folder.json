@@ -1,0 +1,10 @@
+				{
+					"name": "<% NAME %>",
+					"id": "<% ID %>",
+					"order": [
+<% REQUEST_IDS %>
+					],
+					"folders_order": [
+<% FOLDER_IDS %>
+					]
+				}

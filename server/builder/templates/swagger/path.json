@@ -1,0 +1,16 @@
+			"<% METHOD %>": {
+				"tags": [
+					"<% TAG %>"
+				],
+				"description": "<% DESCRIPTION %>",
+				"produces": [
+					"<% MEDIATYPE %>"
+				],
+				"parameters": [
+<% PARAMETERS %>
+				],
+				"responses": {
+<% ASSERTIONS %>
+				},
+				"security": []
+			}

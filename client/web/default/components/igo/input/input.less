@@ -1,0 +1,22 @@
+@import 'less/constant.less';
+
+[_=igoInput] {
+
+	border: 1px #ddd solid;
+
+	input {
+		height: 100%;
+		width: 100%;
+		min-height: 25px;
+		text-indent: 3px;
+		border: none;
+		outline: none;
+		color: inherit;
+	}
+
+	&[disabled]>div>input {
+		.disabledColor();
+	}
+
+	.error();
+}

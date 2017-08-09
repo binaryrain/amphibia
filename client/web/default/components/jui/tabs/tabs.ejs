@@ -1,0 +1,26 @@
+<div>
+	<ul>
+<%
+	var labels = opts.labels || [],
+		contents = opts.contents || {},
+		templates = opts.templates || {};
+
+	labels.forEach(function(label, index) {
+%>
+		<li><a href="#tabs-<%- index %>"><%- label %></a></li>
+<%
+	});
+%>
+	</ul>
+<%
+	labels.forEach(function(label, index) {
+		var content = contents[index],
+			template = templates[index];
+		content = content ? (typeof content === 'function' ? content(opts) : content) : '';
+%>
+	<div id="tabs-<%- index %>"<%- template ? ` template="${template}"` : '' %>><%- content %></div>
+<%
+	});
+%>
+</div>
+<input type="hidden" value="<%- opts.selectedIndex || 0 %>"/>

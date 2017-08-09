@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.equinix</groupId>
+	<artifactId>Amphibia</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+		<name>AmphibiaProject</name>
+		<host>localhost</host>
+		<port>8080</port>
+		<outputFolder>Reports/${host}</outputFolder>
+	</properties>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<directory>ext</directory>
+
+		<plugins>
+			<plugin>
+				<groupId>com.smartbear.soapui</groupId>
+				<artifactId>soapui-maven-plugin</artifactId>
+				<version>5.3.0</version>
+				<executions>
+					<execution>
+						<id>SoapUI Tests</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<projectFile>${basedir}/projects/${name}-soap-5.3.0.xml</projectFile>
+							<environment>Default</environment>
+							<outputFolder>${outputFolder}</outputFolder>
+							<globalProperties>
+								<globalProperty>RestEndPoint=http://${host}:${port}</globalProperty>
+							</globalProperties>
+							<projectProperties>
+								<projectProperty>KEY=VALUE</projectProperty>
+							</projectProperties>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>html-reports</id>
+						<phase>test</phase>
+						<configuration>
+							<tasks>
+								<junitreport todir="${outputFolder}" tofile="testsuites.xml">
+									<fileset dir="${outputFolder}">
+										<include name="TEST-*.xml" />
+									</fileset>
+									<report styledir="src" todir="${outputFolder}" format="noframes" />
+								</junitreport>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-junit</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>ant</groupId>
+			<artifactId>ant-junit</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javafx</groupId>
+			<artifactId>jfxrt</artifactId>
+			<version>2.2</version>
+			<scope>system</scope>
+			<systemPath>${JAVA_HOME}/jre/lib/ext/jfxrt.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.smartbear.soapui</groupId>
+			<artifactId>soapui</artifactId>
+			<version>5.3.0</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>eviwareRepository</id>
+			<url>http://www.soapui.org/repository/maven2</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>eviwarePluginRepository</id>
+			<url>http://www.soapui.org/repository/maven2/</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

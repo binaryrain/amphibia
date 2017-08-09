@@ -1,0 +1,19 @@
+@import (less) 'node_modules/jquery-ui/themes/base/progressbar.css';
+
+[_=juiProgressbar] {
+	width: 100%;
+
+	&>div {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 100%;
+		display: flex;
+		justify-content: center; /* align horizontal */
+		align-items: center; /* align vertical */
+
+		&> span {
+			font-weight: bold;
+		}
+	}
+}

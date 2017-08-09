@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="<%- locality.langugage %>">
+<head>
+<title><%- locales.common.pageTitle %></title>
+
+<%- $include('templates/meta.html') %>
+
+<%- $link('/css/index') %>
+
+<script src="<%- baseStaticPath %>/js/vendor/require-2.3.2<%- extJS %>"></script>
+<link rel="shortcut icon" href="<%- baseStaticPath %>/favicon.ico">
+</head>
+<body>
+	<div class="step1">
+		<h1><%- locales.common.step1 %></h1>
+		<fieldset>
+			<p class="bold"><%- locales.common.option1 %></p>
+			<%- $('igoHbox', {left: `<label>${locales.common.url}</label>`, content: $('igoInput')} ) %>
+			<p class="bold top-gap"><%- locales.common.option2 %></p>
+			<div class="file">
+				<%- $('igoFile', {label: `${locales.common.uploadFile}`}) %>
+				<span></span>
+			</div>
+			<div class="pull-right">
+				<%- $('igoButton', {label: `${locales.common.submit}`} ) %>
+			</div>
+		</fieldset>
+	</div>
+
+	<div class="step2">
+		<h1 class="disabled"><%- locales.common.step2 %></h1>
+	</div>
+
+	<div class="step3">
+		<h1 class="disabled"><%- locales.common.step3 %></h1>
+	</div>
+
+<%- $finalize(`${baseStaticPath}/js/views/index.js`) %>
+</body>
+</html>

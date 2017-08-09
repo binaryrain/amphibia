@@ -1,0 +1,19 @@
+[_=igoInput] {
+  border: 1px #ddd solid;
+}
+[_=igoInput] input {
+  height: 100%;
+  width: 100%;
+  min-height: 25px;
+  text-indent: 3px;
+  border: none;
+  outline: none;
+  color: inherit;
+}
+[_=igoInput][disabled] > div > input {
+  color: #aaa !important;
+}
+[_=igoInput].error_field  {
+  color: #f00;
+  border: 1px solid #f00;
+}

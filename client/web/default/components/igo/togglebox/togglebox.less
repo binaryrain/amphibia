@@ -1,0 +1,68 @@
+@import 'less/constant.less';
+
+@header_height: 36px;
+
+[_=igoTogglebox] {
+	width: 100%;
+	border: 1px solid #999;
+	border-radius: 5px;
+	outline: none;
+
+	&>label, &>header {
+		height: @header_height;
+	}
+
+	header {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+
+	&>label {
+		width:100%;
+		padding: 10px;
+		background: #5b87ac;
+		color: #fff;
+		.noselect();
+		.cursor();
+
+		&:before {
+			color: #000;
+			content: '\25BA';
+			width: 20px;
+			display: inline-block;
+		}
+	}
+
+	&>input {
+		display:none;
+
+		&:after {
+			content: attr(value);
+			margin: -3px 15px;
+			vertical-align: top;
+			display: inline-block;
+			white-space:nowrap;
+			cursor:pointer;
+		}
+
+		&:checked ~ * .toggle-content, &:checked ~ div[template] {
+			.easyIn();
+		}
+
+		&:not(:checked) ~ * .toggle-content {
+			padding: 0;
+			transition: 0.4s padding ease-out;
+		}
+
+		&:checked ~ label:before {
+			content: '\25BC';
+		}
+	}
+
+	.toggle-content, &>div[template] {
+		.easyOut();
+	}
+
+	.error_border();
+}
