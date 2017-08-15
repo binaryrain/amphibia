@@ -24,6 +24,7 @@ public class Swagger extends ProjectAbstract {
 	protected Map<Object, Object> propertyMap;
 	protected Map<String, List<String>> pathMap;
 	protected Map<String, List<String>> interfaceMap;
+	protected Map<?, ?> globalItem;
 	
 	private static final Pattern projectRegExp = Pattern.compile("\\$\\{#Project#(.*?)\\}");
 
@@ -62,7 +63,11 @@ public class Swagger extends ProjectAbstract {
 		PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true));
 		writer.println(swaggerJSON);
 		writer.close();
-		System.out.println("The test file saved successfully.\n" + outputFile);
+	}
+	
+	protected void printEnd() throws Exception {
+		System.out.println("The test file saved successfully.");
+		System.out.println("\nNOTE:\n\nOpen http://editor2.swagger.io in browser and copy & paste JSON from: " + outputFile);
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public class Swagger extends ProjectAbstract {
 	protected void buildGlobalParameters(List<?> globals) throws Exception {
 		super.buildGlobalParameters(globals);
 		for (Object item : globals) {
-			Map<?, ?> globalItem = (Map<?, ?>)item;
+			globalItem = (Map<?, ?>)item;
 			if ("RestEndPoint".equals(globalItem.get("name"))) {
 				String[] pair = globalItem.get("value").toString().split(":");
 				swaggerJSON = replace(swaggerJSON, "<% SCHEME %>", pair[0]);

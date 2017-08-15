@@ -2,10 +2,9 @@ import org.apache.log4j.Logger;
 
 import groovy.lang.Script;
 
+import com.equinix.runner.Main;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.model.testsuite.TestRunner;
-
-import com.equinix.runner.Main;
 
 @groovy.transform.TypeChecked
 public class Bridge {

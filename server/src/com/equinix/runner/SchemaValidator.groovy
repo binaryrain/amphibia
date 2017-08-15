@@ -94,7 +94,7 @@ public class SchemaValidator extends AbstractScript {
 					default:
 						throw new IllegalArgumentException("Unexpected type: key='${key}' - ${obj2}");
 				}
-				if (!(obj1.getClass().equals(clazz))) {
+				if (Runner.isNotNull(obj1) && !(obj1.getClass().equals(clazz))) {
 					throw new IllegalArgumentException("Invalid type: key='${key}' - ${obj1.getClass()} != ${clazz}");
 				}
 			}

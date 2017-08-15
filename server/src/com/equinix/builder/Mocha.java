@@ -52,6 +52,11 @@ public class Mocha extends ProjectAbstract {
 		System.out.println("The test file saved successfully.\n" + outputFile);
 	}
 	
+	protected void printEnd() throws Exception {
+		System.out.println("\nNOTE:\n\nOpen command prompt and CD to: " + outputDirPath);
+		System.out.println("\nRun following commands: \nnpm install\nnpm start");
+	}
+	
 	@Override
 	protected void buildGlobalParameters(List<?> globals) throws Exception {
 		super.buildGlobalParameters(globals);

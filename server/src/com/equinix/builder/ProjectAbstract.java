@@ -42,6 +42,7 @@ public abstract class ProjectAbstract {
 		readInputData();
 		parseInputProjectFile();
 		saveFile();
+		printEnd();
 	}
 	
 	protected String tabs(String source, String tabs) {
@@ -135,5 +136,8 @@ public abstract class ProjectAbstract {
 	}
 
 	protected void saveFile() throws Exception {
+	}
+	
+	protected void printEnd() throws Exception {
 	}
 }

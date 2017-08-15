@@ -18,6 +18,7 @@ public class SoapUI extends ProjectAbstract {
 	protected String xmlContent;
 	protected File outputFile;
 	protected Map<String, String> resourceMap;
+	protected List<?> globals;
 	
 	public SoapUI(CommandLine cmd) throws Exception {
 		super(cmd);
@@ -46,7 +47,7 @@ public class SoapUI extends ProjectAbstract {
 		xmlContent = replace(xmlContent, "<% PROJECT_NAME %>", name);
 		File dir = new File(outputDirPath, "src/scripts");
 		if (!dir.exists()) {
-			dir.mkdirs(); //WARN  [SoapUIProGroovyScriptEngineFactory] Missing scripts folder [projects\src]
+			dir.mkdirs(); //WARN  [SoapUIProGroovyScriptEngineFactory] Missing scripts folder [UECP-GLOBAL\soapui\projects\src]
 		}
 	}
 	
@@ -57,7 +58,24 @@ public class SoapUI extends ProjectAbstract {
 		PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true));
 		writer.println(xmlContent);
 		writer.close();
+	}
+
+	@Override
+	protected void printEnd() {
 		System.out.println("The project file saved successfully.\n" + outputFile);
+		if (globals != null && globals.size() > 0) {
+			System.out.println("\nNOTE:\n\nTo add or update Global Properties, go to File -> Preferences -> Global Properties");
+			System.out.println("__________________________________________________________________________________\n");
+			for (Object item : globals) {
+				Map<?, ?> globalItem = (Map<?, ?>)item;
+				System.out.println(globalItem.get("name") + "\t\t\t" + globalItem.get("value"));
+			}
+		}
+	}
+	
+	@Override
+	protected void buildGlobalParameters(List<?> globals) throws Exception {
+		this.globals = globals;
 	}
 	
 	@Override

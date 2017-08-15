@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringUtils;
 
 public class ReportTestCase {
 	
+	public static int MAX_TRACE_LENGTH = 15;
+	
 	public static enum State {
 		SUCCESS,
 		ERROR,
@@ -16,17 +18,26 @@ public class ReportTestCase {
 	private String testCaseName;
 	private State state;
 	private Throwable t;
+	private String stackTrace;
 	private long time;
 
 	public ReportTestCase(String className, String testCaseName) {
 		this.className = className;
 		this.testCaseName = testCaseName;
 		this.state = State.SKIPPED;
+		this.stackTrace = "";
+	}
+	
+	public void addException(State state, Throwable t) {
+		addException(state, t, t.getStackTrace());
 	}
  
-	public void addException(State state, Throwable t) {
+	public void addException(State state, Throwable t, StackTraceElement[] stackTrace) {
 		this.state = state;
 		this.t = t;
+		if (stackTrace != null) {
+			this.stackTrace = StringUtils.join(t.getStackTrace(), "\n\t", 0, MAX_TRACE_LENGTH);
+		}
 	}
 	
 	public void success() {
@@ -46,7 +57,7 @@ public class ReportTestCase {
 	}
 	
 	public String getStackTrace() {
-		return StringUtils.join(t.getStackTrace(), "\n\t");
+		return stackTrace;
 	}
 	
 	public String getClassName() {

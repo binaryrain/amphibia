@@ -11,13 +11,17 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 
 import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.config.CredentialsConfig;
 import com.eviware.soapui.impl.wsdl.WsdlTestSuite;
 import com.eviware.soapui.impl.wsdl.submit.transports.http.HttpResponse;
+import com.eviware.soapui.impl.wsdl.support.AbstractTestRunner.TimeoutTimerTask
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCase;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestCaseRunner;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestRunContext;
@@ -35,15 +39,12 @@ import com.eviware.soapui.model.testsuite.TestStepResult.TestStepStatus
 import com.eviware.soapui.support.JsonPathFacade;
 import com.eviware.soapui.support.types.StringToObjectMap;
 import com.eviware.soapui.support.types.StringToStringsMap;
-import com.eviware.soapui.tools.AbstractSoapUITestRunner;
+import com.sun.xml.internal.ws.api.Cancelable
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull
 import net.sf.json.JSONObject;
-
-import org.apache.commons.io.FileUtils;
-
-import com.equinix.runner.scripts.Restful;
 
 @groovy.transform.TypeChecked
 public class Runner extends AbstractScript {
@@ -63,7 +64,7 @@ public class Runner extends AbstractScript {
 
 		jUnitReports = new JUnitReports();
 
-		JSON runnerJson = getJsonObject("runner.json");
+		JSON runnerJson = getJsonObject("tests/runner.json");
 		JSONObject projectProperties = getProperties(runnerJson);
 		JSONArray testcasesJson = (JSONArray) runnerJson.getAt("testcases");
 		optionsJson = (JSON) runnerJson.getAt("options");
@@ -74,6 +75,8 @@ public class Runner extends AbstractScript {
 			if (outputFolder != null && optionsJson.getAt("appendLogs") == false && new File(outputFolder).exists()) {
 				FileUtils.cleanDirectory(new File(outputFolder));
 			}
+		} else {
+			outputFolder = getFile(projectPath, "Reports").getAbsolutePath();
 		}
 
 		Map<String, WsdlTestSuite> testSuites = new HashMap<String, WsdlTestSuite>();
@@ -95,14 +98,15 @@ public class Runner extends AbstractScript {
 			}
 			log.info("[------ Initializing testcase ${testSuite.name}::${testCase.name} ------]");
 
-			jUnitReports.createNewReport(outputFolder, project.getName() + "-" + testSuiteName + "." + testCaseName);
+			jUnitReports.createNewReport(outputFolder, project.getName() + "-" + testSuiteName.replaceAll("\\W+", "") + "." + testCaseName);
 
 			TestRunListener[] testRunListeners = testCase.getTestRunListeners();
 			for (int i = 0; i < testRunListeners.length; i++) {
-				if (testRunListeners[i] instanceof AbstractSoapUITestRunner) {
+				if ("com.eviware.soapui.tools.SoapUITestCaseRunner".equals(testRunListeners[i].class.getName())) {
 					Method setIgnoreError = testRunListeners[i].getClass().getMethod("setIgnoreError", boolean.class);
 					if (setIgnoreError != null) {
 						setIgnoreError.invoke(testRunListeners[i], true);
+						break;
 					}
 				}
 			}
@@ -302,9 +306,9 @@ public class Runner extends AbstractScript {
 									}
 								}
 	
-								if (requestJson.getAt("body") != null) {
+								if (isNotNull(requestJson.getAt("body"))) {
 									JSONObject body = getBody(requestJson, testStep.getProperties());
-									if (requestJson.getAt("schema") != null) {
+									if (isNotNull(requestJson.getAt("schema"))) {
 										JSON schema = getSchema(requestJson.getAt("schema").toString());
 										new SchemaValidator(body, schema);
 									}
@@ -314,7 +318,7 @@ public class Runner extends AbstractScript {
 								if (headersJson != null) {
 									for (Object _key : headersJson.keySet()) {
 										String key = (String)_key;
-										if (headersJson.getAt(key) != null) {
+										if (isNotNull(headersJson.getAt(key))) {
 											stsmap.add(key, headersJson.getAt(key).toString());
 										}
 									}
@@ -327,6 +331,11 @@ public class Runner extends AbstractScript {
 									continue;
 								}
 
+								if (result.getStatus() == TestStepStatus.CANCELED) {
+									testcase.addException(ReportTestCase.State.ERROR, new Exception(result.getMessages().join("\n")), null);
+									continue;
+								}
+
 								if (result.getStatus() == TestStepStatus.FAILED) {
 									testcase.addException(ReportTestCase.State.ERROR, new Exception(result.getMessages().join("\n")));
 									continue;
@@ -334,11 +343,11 @@ public class Runner extends AbstractScript {
 								HttpResponse response = ((RestRequestStepResult)result).getResponse();
 
 								JSON responseJson = (JSON)stepJson.getAt("response");
-								if (responseJson != null && response != null) {
+								if (isNotNull(responseJson) && response != null) {
 									String resultContent = response.getContentAsString();
 									if (resultContent != null  && resultContent.trim().length() > 0) {
 										JSONObject apiResultBody = (JSONObject)parse(resultContent);
-										if (apiResultBody != null && responseJson.getAt("schema") != null) {
+										if (apiResultBody != null && isNotNull(responseJson.getAt("schema"))) {
 											JSON schema = getSchema(responseJson.getAt("schema").toString());
 											new SchemaValidator(apiResultBody, schema);
 										}
@@ -606,13 +615,25 @@ public class Runner extends AbstractScript {
 		@Override
 		public void run() {
 			this.fillInTestRunnableListeners();
-			Object timeout = optionsJson.getAt("testCaseTimeout");
-			if (timeout != null && Integer.parseInt(timeout.toString()) > 0) {
-				this.startTimeoutTimer(Integer.parseInt(timeout.toString()));
-			}
 			this.notifyBeforeRun();
 			this.setStartTime();
-			this.result = (RestRequestStepResult)testStep.run(this, testStepContext); 
+			Object timeout = optionsJson.getAt("testCaseTimeout");
+			Timer timer = new Timer();
+			boolean isTimeout = false;
+			if (timeout != null && Integer.parseInt(timeout.toString()) > 0) {
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						isTimeout = true;
+					}
+				}, Long.valueOf(timeout.toString()));
+			}
+			this.result = (RestRequestStepResult)testStep.run(this, testStepContext);
+			timer.cancel();
+			if (isTimeout) {
+				result.setStatus(TestStepStatus.CANCELED);
+				result.addMessage("TestCase timed out");
+			}
 			this.getResults().add(result);
 		}
 
@@ -627,5 +648,9 @@ public class Runner extends AbstractScript {
 			this.setTimeTaken();
 			this.internalFinally(testStepContext);
 		}
+	}
+	
+	public static boolean isNotNull(Object value) {
+		return value != null && !"null".equals(String.valueOf(value));
 	}
 }

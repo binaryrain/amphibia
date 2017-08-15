@@ -24,10 +24,10 @@ public class JUnitReports {
 	protected static Map<String, ReportTestSuite> testsuites;
 
 	public JUnitReports() {
-		testsuites = new TreeMap<String, ReportTestSuite>();
 	}
 
 	public void createNewReport(String outputFolder, String name) {
+		testsuites = new TreeMap<String, ReportTestSuite>();
 		xmlFile = new File(outputFolder, "TEST-" + name + ".xml");
 		testsute = new ReportTestSuite();
 		testsuites.put(name, testsute);

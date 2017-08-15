@@ -2,15 +2,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.equinix</groupId>
-	<artifactId>Amphibia</artifactId>
+	<artifactId>amphibia</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
-		<name>AmphibiaProject</name>
-		<host>localhost</host>
-		<port>8080</port>
+		<version.plugin>2.0.2</version.plugin>
+		<version.soap>6.0.0</version.soap>
+		<name>ECP</name>
+		<host>sv2lxampadi01.corp.equinix.com</host>
+		<port>9005</port>
 		<outputFolder>Reports/${host}</outputFolder>
+
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
@@ -26,17 +32,18 @@
 					<dependency>
 						<groupId>com.smartbear</groupId>
 						<artifactId>ready-api-core</artifactId>
-						<version>2.0.2</version>
+						<version>${version.plugin}</version>
 					</dependency>
 				</dependencies>
 				<executions>
 					<execution>
+						<id>RedyAPI! Tests</id>
 						<phase>test</phase>
 						<goals>
 							<goal>test</goal>
 						</goals>
 						<configuration>
-							<projectFile>${basedir}/projects/${name}-ready-6.0.0.xml</projectFile>
+							<projectFile>${basedir}/projects/${name}-ready-${version.soap}.xml</projectFile>
 							<environment>Default</environment>
 							<outputFolder>${outputFolder}</outputFolder>
 							<globalProperties>
@@ -52,6 +59,13 @@
 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-junit</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>html-reports</id>
@@ -70,16 +84,59 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+
+					<execution>
+						<id>compile-resources</id>
+						<phase>compile</phase>
+						<configuration>
+							<tasks>
+								<copy todir="${project.build.directory}" flatten="true">
+									<fileset dir="${project.build.sourceDirectory}">
+										<include name="*.xsl" />
+									</fileset>
+								</copy>
+								<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+									<classpath refid="maven.compile.classpath" />
+								</taskdef>
+								<mkdir dir="${project.build.outputDirectory}" />
+								<groovyc destdir="${project.build.outputDirectory}"
+									srcdir="${basedir}/src" listfiles="true">
+									<classpath refid="maven.compile.classpath" />
+								</groovyc>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-junit</artifactId>
-						<version>1.6.5</version>
-					</dependency>
-				</dependencies>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<descriptor>assembly.xml</descriptor>
+					<finalName>amphibia</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
 			</plugin>
 		</plugins>
+
 	</build>
 
 	<dependencies>
@@ -117,7 +174,7 @@
 		<dependency>
 			<groupId>com.smartbear</groupId>
 			<artifactId>ready-api-soapui</artifactId>
-			<version>2.0.2</version>
+			<version>${version.plugin}</version>
 		</dependency>
 
 		<dependency>

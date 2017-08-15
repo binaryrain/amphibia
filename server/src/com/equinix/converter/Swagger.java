@@ -1,7 +1,10 @@
 package com.equinix.converter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -24,32 +28,53 @@ public class Swagger {
 	protected CommandLine cmd;
 	protected JSONObject doc;
 	protected JSONObject output;
+	protected JSONObject swaggerProperties;
+	protected File outputDir;
 	protected File outputFile;
 	protected String interfaceName;
+	protected Runner runner;
 
-	protected JSONNull NULL = JSONNull.getInstance();
+	public static final String ASSERTS_OUTPUT_DIR = "asserts";
+	public static final Map<String, Map<String, Object>> asserts = new TreeMap<String, Map<String, Object>>();
+	public static final JSONNull NULL = JSONNull.getInstance();
 
-	public Swagger(CommandLine cmd, String content, String outputFile) throws Exception {
+	public Swagger(CommandLine cmd, InputStream is, File outputDir) throws Exception {
 		this.cmd = cmd;
-		this.doc = JSONObject.fromObject(content);
+		this.doc = getContent(is);
 		this.output = new JSONObject();
-		this.outputFile = new File(outputFile);
+		this.outputDir = outputDir;
+		this.runner = new Runner(this);
 		parse();
 		saveFile();
 	}
 
 	protected void saveFile() throws Exception {
 		outputFile.delete();
-
-		ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
-		scriptEngine.put("jsonString", output.toString());
-		scriptEngine.eval("result = JSON.stringify(JSON.parse(jsonString), null, 4)");
-		String json = ((String)scriptEngine.get("result")).replaceAll(" {4}", "\t");
+		for (String httpCode : asserts.keySet()) {
+			Schema.save(this, JSONArray.fromObject(new Object[] {asserts.get(httpCode)}).toString(), httpCode, ASSERTS_OUTPUT_DIR);
+		}
+		
+		this.runner.createRunner();
 
 		PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true));
-		writer.println(json);
+		writer.println(getJson(output.toString()));
 		writer.close();
 		System.out.println("The test file saved successfully.\n" + outputFile);
+	}
+	
+	public String getJson(List<?> value) throws Exception {
+		return getJson(JSONArray.fromObject(value).toString());
+	}
+
+	public String getJson(Map<?, ?> value) throws Exception {
+		return getJson(JSONObject.fromObject(value).toString());
+	}
+
+	public String getJson(String strJson) throws Exception {
+		ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+		scriptEngine.put("jsonString", strJson);
+		scriptEngine.eval("result = JSON.stringify(JSON.parse(jsonString), null, 4)");
+		return ((String)scriptEngine.get("result")).replaceAll(" {4}", "\t");
 	}
 
 	protected void parse() throws Exception {
@@ -61,21 +86,47 @@ public class Swagger {
 			}
 		}
 		output.accumulate("name", name);
+		outputFile = new File(outputDir, name + ".json");
+
+		String param = cmd.getOptionValue(Converter.PROPERTIES);
+		if (param != null) {
+			swaggerProperties = getContent(new FileInputStream(new File(param).getAbsolutePath()));
+		}
 
 		JSONArray globals = new JSONArray();
 		JSONArray schemes = doc.getJSONArray("schemes");
 		globals.add(ImmutableMap.<String, Object>builder()
 			.put("name", "RestEndPoint")
 			.put("value", schemes.get(0) + "://" + doc.getString("host")).build());
+
+		if (swaggerProperties != null) {
+			JSONObject propertyGlobals = swaggerProperties.getJSONObject("globals");
+			for (Object key : propertyGlobals.keySet()) {
+				globals.add(ImmutableMap.<String, Object>builder()
+						.put("name", key)
+						.put("value", propertyGlobals.get(key)).build());
+			}
+		}
+
 		output.accumulate("globals", globals);
+
 		
 		JSONArray interfaces = new JSONArray();
 		interfaceName = doc.getString("basePath");
 
 		JSONArray resources = new JSONArray();
-		resources.add(ImmutableMap.<String, Object>builder()
-				.put("name", "CONTENT-TYPE")
-				.put("value", "application/json").build());
+		if (swaggerProperties != null) {
+			JSONObject propertyHeaders = swaggerProperties.getJSONObject("headers");
+			for (Object key : propertyHeaders.keySet()) {
+				resources.add(ImmutableMap.<String, Object>builder()
+						.put("name", key)
+						.put("value", propertyHeaders.get(key)).build());
+			}
+		} else {
+			resources.add(ImmutableMap.<String, Object>builder()
+					.put("name", "CONTENT-TYPE")
+					.put("value", "application/json").build());
+		}
 
 		interfaces.add(ImmutableMap.<String, Object>builder()
 				.put("name", interfaceName)
@@ -83,7 +134,17 @@ public class Swagger {
 				.put("resources", resources).build());
 		output.accumulate("interfaces", interfaces);
 
-		output.accumulate("properties", new JSONArray());
+		JSONArray properties = new JSONArray();
+		if (swaggerProperties != null) {
+			JSONObject propertyValues = swaggerProperties.getJSONObject("properties");
+			this.runner.addProperties(propertyValues);
+			for (Object key : propertyValues.keySet()) {
+				properties.add(ImmutableMap.<String, Object>builder()
+						.put("name", key)
+						.put("value", propertyValues.get(key)).build());
+			}
+		}
+		output.accumulate("properties", properties);
 		
 		JSONArray testsuites = new JSONArray();
 		JSONArray testcases = new JSONArray();
@@ -91,7 +152,7 @@ public class Swagger {
 		addTestCases(testcases);
 
 		testsuites.add(ImmutableMap.<String, Object>builder()
-				.put("name", doc.getString("basePath").split("/")[1])
+				.put("name", doc.getString("basePath"))
 				.put("properties", new JSONArray())
 				.put("testcases", testcases).build());
 		output.accumulate("testsuites", testsuites);
@@ -132,6 +193,8 @@ public class Swagger {
 					.put("properties", new JSONArray())
 					.put("teststeps", teststeps).build());
 		}
+		
+		this.runner.addTestCases(interfaceName, testCaseMap);
 	}
 
 	protected void addTestSteps(JSONArray teststeps, List<Object[]> apiList) throws Exception {
@@ -141,7 +204,7 @@ public class Swagger {
 			JSONObject api = (JSONObject) item[2];
 			teststeps.add(ImmutableMap.<String, Object>builder()
 					.put("type", "restrequest")
-					.put("name", methodName + " - " + api.getString("summary"))
+					.put("name", getTestCaseName(methodName, api.getString("summary")))
 					.put("config", getConfig(path, methodName, api)).build());
 		}
 	}
@@ -160,6 +223,36 @@ public class Swagger {
 		}
 		config.accumulate("assertions", assertions);
 
+		JSONArray statuses = null;
+		if (swaggerProperties != null) {
+			statuses = swaggerProperties.getJSONArray("asserts");
+		}
+		for (Object httpCode : responses.keySet()) {
+			int code = Integer.parseInt(httpCode.toString());
+			JSONObject response = responses.getJSONObject(httpCode.toString());
+			Map<String, Object> item = new TreeMap<String, Object>();
+			item.put("statusCode", code);
+			if (statuses != null) {
+				for (Object obj : statuses) {
+					JSONObject jsonObj = (JSONObject) obj;
+					JSONArray range = jsonObj.getJSONArray("range");
+					if (code >= (int)range.get(0) && code <= (int)range.get(1)) {
+						item.put("status", jsonObj.getString("status"));
+						break;
+					}
+				}
+			}
+			if (!"false".equals(Converter.cmd.getOptionValue(Converter.SCHEMA))) {
+				asserts.put(httpCode.toString(), item);
+			}
+
+			if (code >= 200 && code < 300) {
+				if (response.containsKey("schema") && response.getJSONObject("schema").containsKey("$ref")) {
+					new Schema(this, response.getJSONObject("schema").getString("$ref"), "responses");
+				}
+			}
+		}
+
 		Definition definition = new Definition(doc);
 		parseDefinition(definition, api);
 		JSONObject body = api.getJSONObject("example");
@@ -176,7 +269,7 @@ public class Swagger {
 				.put("method", methodName)
 				.put("interface", interfaceName)
 				.put("mediaType", "application/json")
-				.put("path", path.substring(1) + definition.getQueries())
+				.put("path", interfaceName.substring(1) + path + definition.getQueries())
 				.put("body", body == null ? NULL : body).build());
 		return config;
 	}
@@ -190,6 +283,7 @@ public class Swagger {
 					JSONObject schema = param.getJSONObject("schema");
 					if (schema.containsKey("$ref")) {
 						definition.getRef(schema.getString("$ref"));
+						new Schema(this, schema.getString("$ref"), "requests");
 					}
 				} else if ("query".equals(in) && (param.containsKey("default") || param.containsKey("enum"))) {
 					definition.addQueryParam(param.getString("name"), Definition.getEnumOrDefault(param));
@@ -198,5 +292,29 @@ public class Swagger {
 				}
 			}
 		}
+	}
+	
+	protected JSONObject getContent(InputStream is) throws IOException {
+		return JSONObject.fromObject(IOUtils.toString(is));
+	}
+
+	public String getPath(File path) {
+		return path.getPath().replaceAll("\\\\", "/");
+	}
+	
+	public String getTestCaseName(String methodName, String summary) {
+		return  methodName.toUpperCase() + " - " + summary;
+	}
+
+	public String getDefinitionName(String ref) {
+		return ref.split("/")[2];
+	}
+
+	public File getOutputDir() {
+		return outputDir;
+	}
+
+	public JSONObject getDoc() {
+		return doc;
 	}
 }

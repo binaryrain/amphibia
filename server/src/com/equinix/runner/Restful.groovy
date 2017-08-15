@@ -1,4 +1,4 @@
-package com.equinix.runner.scripts;
+package com.equinix.runner;
 
 import com.eviware.soapui.impl.wsdl.WsdlTestSuite;
 import com.eviware.soapui.impl.wsdl.submit.transports.http.HttpResponse;

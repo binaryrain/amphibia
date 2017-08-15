@@ -14,9 +14,10 @@
 		<con:xmlTemplates/>
 		<con:parameters/>
 	</con:reporting>
-	<con:beforeRunScript>import com.eviware.soapui.SoapUI;
+	<con:beforeRunScript>import groovy.util.GroovyScriptEngine;
+import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.support.UISupport;
-import groovy.util.GroovyScriptEngine;
+import com.eviware.soapui.support.ClasspathHacker;
 
 if (SoapUI.logMonitor != null) {
 	if (SoapUI.logMonitor.getCurrentLog()) {
@@ -39,9 +40,15 @@ try {
 	GroovyScriptEngine gse = new GroovyScriptEngine(projectPath + "/src");
 	Class externalScript = gse.loadScriptByName("Bridge.groovy");
 	externalScript.newInstance(this, project, log, projectPath);
-} catch (Exception e) {
-	log.error(e);
-	UISupport.showInfoMessage("Some error occurred, Please review in script log.", "Script Error");
+} catch (Exception ex1) {
+	try {
+		ClasspathHacker classpathHacker = new ClasspathHacker();
+		classpathHacker.addFile(new java.io.File(projectPath + "/ext/amphibia.jar"));
+		Class.forName("Bridge").getConstructor(Script.class, com.eviware.soapui.impl.wsdl.WsdlProject.class, org.apache.log4j.Logger.class, String.class).newInstance(this, project, log, projectPath);
+	} catch (Exception ex2) {
+		log.error(ex2);
+		UISupport.showInfoMessage("Some error occurred, Please review in script log.", "Script Error");
+	}
 }</con:beforeRunScript>
 	<con:sensitiveInformation/>
 	<con:authRepository/>

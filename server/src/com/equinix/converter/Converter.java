@@ -15,18 +15,24 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 
+import com.equinix.runner.AbstractScript;
+
 public class Converter {
 
 	public static final String NAME = "name";
 	public static final String INPUT = "input";
-	public static final String OUTPUT = "output";
-	
-	public static final String DEFAULT_OUTPUT = new File("projects/swagger.json").getAbsolutePath();
+	public static final String PROPERTIES = "properties";
+	public static final String SCHEMA = "schema";
+	public static final String TESTS = "tests";
+
+	public static CommandLine cmd;
 
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 		options.addOption(new Option("n", NAME, true, "Project name"));
-		options.addOption(new Option("o", OUTPUT, true, "output project file. Default: " + DEFAULT_OUTPUT));
+		options.addOption(new Option("p", PROPERTIES, true, "Properties file"));
+		options.addOption(new Option("s", SCHEMA, true, "generate JSON schemas. Default: true"));
+		options.addOption(new Option("t", TESTS, true, "generate JSON tests. Default: true"));
 
 		Option input = new Option("i", INPUT, true, "Swagger file or URL");
 		input.setRequired(true);
@@ -34,7 +40,6 @@ public class Converter {
 
 		CommandLineParser parser = new GnuParser();
 		HelpFormatter formatter = new HelpFormatter();
-		CommandLine cmd;
 
 		try {
 			cmd = parser.parse(options, args);
@@ -43,10 +48,10 @@ public class Converter {
 			System.exit(1);
 			return;
 		}
-		
-		String outputFile = cmd.getOptionValue(OUTPUT);
-		if (outputFile == null) {
-			outputFile = DEFAULT_OUTPUT;
+
+		File outputDir = new File(new File(AbstractScript.PROJECT_DIR).getAbsolutePath());
+		if (!outputDir.exists()) {
+			outputDir.mkdirs();
 		}
 		
 		String inputFile = cmd.getOptionValue(INPUT);
@@ -57,7 +62,7 @@ public class Converter {
 			is = new FileInputStream(inputFile);
 		}
 		try {
-			new Swagger(cmd, IOUtils.toString(is), outputFile);
+			new Swagger(cmd, is, outputDir);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

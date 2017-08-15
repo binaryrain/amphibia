@@ -13,7 +13,6 @@ public class Main {
 	private String projectPath;
 	private TestRunner runner;
 	private WsdlProject project;
-	private File jsonDir;
 
 	private static Main instance = null;
 	
@@ -31,7 +30,6 @@ public class Main {
 		this.projectPath = projectPath;
 		this.project = project;
 		this.log = log;
-		this.jsonDir = new File(projectPath, "data/json");
 
 		log.info("************************************** ${this.project.getName()} PROJECT **************************************");
 		log.info("projectPath: " + projectPath);
@@ -60,9 +58,5 @@ public class Main {
 
 	public WsdlProject getProject() {
 		return project;
-	}
-
-	public File getJsonDir() {
-		return jsonDir;
 	}
 }

@@ -46,7 +46,6 @@ public class Postman extends ProjectAbstract {
 		PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true));
 		writer.println(jsonContent);
 		writer.close();
-		System.out.println("The project file saved successfully.\n" + outputFile);
 	}
 	
 	@Override
@@ -210,5 +209,11 @@ public class Postman extends ProjectAbstract {
 		String id = "00000000-" + String.format("%04d", folderIndex++) + "-0000-0000-000000000000";
 		collection.add(tabs('"' + id + '"', "\t\t\t\t\t\t"));
 		return id;
+	}
+	
+	protected void printEnd() throws Exception {
+		System.out.println("The project file saved successfully.");
+		System.out.println("\nNOTE:\n\n1) Open SETTINGS window\n2) Click Data tab\n3) Click the Choose Files button and navigate to: " + outputFile);
+		System.out.println("\n\nSelect a new Environment");
 	}
 }
