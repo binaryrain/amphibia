@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -14,6 +16,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.equinix.runner.AbstractScript;
 
@@ -24,15 +28,20 @@ public class Converter {
 	public static final String PROPERTIES = "properties";
 	public static final String SCHEMA = "schema";
 	public static final String TESTS = "tests";
+	public static final String LIST = "list";
 
 	public static CommandLine cmd;
+	
+	private static List<String> listOfFile;
+	private static final String CURR_DIR = new File(".").getAbsolutePath();
 
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 		options.addOption(new Option("n", NAME, true, "Project name"));
 		options.addOption(new Option("p", PROPERTIES, true, "Properties file"));
-		options.addOption(new Option("s", SCHEMA, true, "generate JSON schemas. Default: true"));
-		options.addOption(new Option("t", TESTS, true, "generate JSON tests. Default: true"));
+		options.addOption(new Option("s", SCHEMA, true, "Generate JSON schemas. Default: true"));
+		options.addOption(new Option("t", TESTS, true, "Generate JSON tests. Default: true"));
+		options.addOption(new Option("l", LIST, true, "List of files. Default: false"));
 
 		Option input = new Option("i", INPUT, true, "Swagger file or URL");
 		input.setRequired(true);
@@ -54,6 +63,12 @@ public class Converter {
 			outputDir.mkdirs();
 		}
 		
+		String list = cmd.getOptionValue(LIST);
+		if ("true".equals(list)) {
+			listOfFile = new ArrayList<String>();
+			Logger.getRootLogger().setLevel(Level.ERROR);
+		}
+
 		String inputFile = cmd.getOptionValue(INPUT);
 		InputStream is = null;
 		if (inputFile.startsWith("http")) {
@@ -63,10 +78,19 @@ public class Converter {
 		}
 		try {
 			new Swagger(cmd, is, outputDir);
+			if (listOfFile != null) {
+				System.out.println(String.join("\n", listOfFile));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(is);
+		}
+	}
+	
+	public static void addFile(File file) {
+		if (listOfFile != null) {
+			listOfFile.add(file.getAbsolutePath().substring(CURR_DIR.length() - 1));
 		}
 	}
 

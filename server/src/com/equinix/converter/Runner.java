@@ -59,6 +59,7 @@ public class Runner {
 		writer.println(swagger.getJson(json));
 		writer.close();
 		LOGGER.debug("The schena file saved successfully.\n" + outputFile);
+		Converter.addFile(outputFile);
 		return swagger.getPath(path) + "/" + fileName;
 	}
 

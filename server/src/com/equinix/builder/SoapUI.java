@@ -47,7 +47,7 @@ public class SoapUI extends ProjectAbstract {
 		xmlContent = replace(xmlContent, "<% PROJECT_NAME %>", name);
 		File dir = new File(outputDirPath, "src/scripts");
 		if (!dir.exists()) {
-			dir.mkdirs(); //WARN  [SoapUIProGroovyScriptEngineFactory] Missing scripts folder [UECP-GLOBAL\soapui\projects\src]
+			dir.mkdirs(); //WARN  [SoapUIProGroovyScriptEngineFactory] Missing scripts folder [soapui\projects\src]
 		}
 	}
 	

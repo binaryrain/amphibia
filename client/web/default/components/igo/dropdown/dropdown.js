@@ -82,6 +82,14 @@ function igoDropdown($, selector, ig) {
 			this.option = this.$popup.find('li:contains("' + value + '")');
 		},
 
+		addRow: function(row, selectRow) {
+			this.$popup.append(this.createItem(row));
+			this.initItems(this.$el, this);
+			if (selectRow) {
+				this.index = this.$popup.children().length - 1;
+			}
+		},
+
 		data: {
 			get: function() {
 				return this._data;

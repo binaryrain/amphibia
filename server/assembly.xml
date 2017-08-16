@@ -25,9 +25,16 @@
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/ext</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>/com/equinix</outputDirectory>
 			<includes>
 				<include>**/*.xsl</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/ext</directory>
+			<outputDirectory>/com/equinix</outputDirectory>
+			<includes>
+				<include>templates/**</include>
 			</includes>
 		</fileSet>
 	</fileSets>

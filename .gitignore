@@ -1,5 +1,6 @@
 .idea
 *.log
+client/build/*
 server/.settings
 server/target/*
 server/Reports

@@ -9,9 +9,9 @@
 	<properties>
 		<version.plugin>2.0.2</version.plugin>
 		<version.soap>6.0.0</version.soap>
-		<name>ECP</name>
-		<host>sv2lxampadi01.corp.equinix.com</host>
-		<port>9005</port>
+		<name>PROJECT_NAME</name>
+		<host>localhost</host>
+		<port>8080</port>
 		<outputFolder>Reports/${host}</outputFolder>
 
 		<maven.compiler.source>1.8</maven.compiler.source>

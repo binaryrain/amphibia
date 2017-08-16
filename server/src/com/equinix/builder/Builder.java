@@ -2,8 +2,6 @@ package com.equinix.builder;
 
 import org.apache.commons.cli.GnuParser;
 
-import java.io.File;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -15,14 +13,10 @@ public class Builder {
 
 	public static final String FORMAT = "format";
 	public static final String INPUT = "input";
-	public static final String OUTPUT = "output";
-	
-	public static final String DEFAULT_OUTPUT = new File("projects").getAbsolutePath();
 
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		options.addOption(new Option("f", FORMAT, true, "export format: SOAP, READY, POSTMAN, MOCHA, SWAGGER. Default: SOAP"));
-		options.addOption(new Option("o", OUTPUT, true, "output directory. Default: " + DEFAULT_OUTPUT));
+		options.addOption(new Option("f", FORMAT, true, "Export format: SOAP, READY, POSTMAN, MOCHA, SWAGGER. Default: SOAP"));
 
 		Option input = new Option("i", INPUT, true, "JSON input project file");
 		input.setRequired(true);

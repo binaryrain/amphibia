@@ -1,2 +1,3 @@
 CD ..
-mvn clean compile assembly:single
+CALL mvn clean compile assembly:single
+PAUSE

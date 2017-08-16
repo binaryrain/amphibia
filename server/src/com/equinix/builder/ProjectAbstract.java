@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +14,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.io.Charsets;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.equinix.runner.AbstractScript;
+import com.google.common.io.Resources;
 
 import groovy.json.JsonSlurper;
 import net.sf.json.JSONObject;
@@ -27,14 +30,17 @@ public abstract class ProjectAbstract {
 	protected String inputFilePath;
 	protected String outputDirPath;
 
+	private final ClassLoader classLoader = getClass().getClassLoader();
+
 	public ProjectAbstract(CommandLine cmd) throws Exception {
 		this.cmd = cmd;
 		inputFilePath = cmd.getOptionValue(Builder.INPUT);
-		outputDirPath = cmd.getOptionValue(Builder.OUTPUT);
-		if (outputDirPath == null) {
-			outputDirPath = Builder.DEFAULT_OUTPUT;
+		outputDirPath = new File(AbstractScript.PROJECT_DIR).getAbsolutePath();
+
+		File outputDir = new File(outputDirPath);
+		if (!outputDir.exists()) {
+			outputDir.mkdirs();
 		}
-		new File(outputDirPath).mkdirs();
 		init();
 	}
 
@@ -74,19 +80,24 @@ public abstract class ProjectAbstract {
 	}
 
 	protected String getFileContent(String file) throws IOException {
-		return getFileContent(new File(file));
+		return getFileContent(new File(file).toURI());
 	}
 
-	protected String getFileContent(File file) throws IOException {
-		return Files.toString(file, Charsets.UTF_8);
+	protected String getFileContent(URI uri) throws IOException {
+		return Resources.toString(uri.toURL(), Charsets.UTF_8);
 	}
 
-	protected File getTemplateFile(String path) throws FileNotFoundException {
-		File file = new File("builder/templates/" + path);
-		if (!file.exists()) {
-			throw new FileNotFoundException("The source XML file not found: " + file.getAbsolutePath());
+	protected URI getTemplateFile(String path) throws Exception {
+		URL url = classLoader.getResource("com/equinix/templates/" + path);
+		if (url != null) {
+			return url.toURI();
+		} else {
+			File file = new File("builder/templates/" + path);
+			if (!file.exists()) {
+				throw new FileNotFoundException("The source XML file not found: " + file.getAbsolutePath());
+			}
+			return file.toURI();
 		}
-		return file;
 	}
 
 	protected String replace(String source, Object target, Object replacement) {

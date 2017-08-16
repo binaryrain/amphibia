@@ -1,11 +1,12 @@
 <%
 	var label = '',
 		labelField = opts.labelField || 'label',
-		dataField = opts.dataField || '',
+		dataField = opts.dataField || 'data',
 		menus = opts.menus || [],
 		open = opts.open || false,
 		selectedIndex = isNaN(opts.selectedIndex) ? -1 : opts.selectedIndex,
 		defaultItemRenderer = '<li>%LABEL%</li>',
+		defaultDataItemRenderer = '<li data="%DATA%">%LABEL%</li>',
 		itemRenderer = orgItemRenderer = opts.itemRenderer,
 		labelRenderer = orgLabelRenderer = opts.labelRenderer,
 		item, lis = [];
@@ -31,6 +32,8 @@
 
 		if (itemRenderer) {
 			item = itemRenderer(menu, opts, defaultItemRenderer, index);
+		} else if (menu[dataField] !== undefined) {
+			item = defaultDataItemRenderer;
 		} else {
 			item = defaultItemRenderer;
 		}

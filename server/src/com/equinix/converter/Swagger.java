@@ -16,6 +16,7 @@ import javax.script.ScriptEngineManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -33,6 +34,8 @@ public class Swagger {
 	protected File outputFile;
 	protected String interfaceName;
 	protected Runner runner;
+	
+	private static final Logger LOGGER = Logger.getLogger(Swagger.class.getName());
 
 	public static final String ASSERTS_OUTPUT_DIR = "asserts";
 	public static final Map<String, Map<String, Object>> asserts = new TreeMap<String, Map<String, Object>>();
@@ -59,7 +62,8 @@ public class Swagger {
 		PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true));
 		writer.println(getJson(output.toString()));
 		writer.close();
-		System.out.println("The test file saved successfully.\n" + outputFile);
+		LOGGER.debug("The test file saved successfully.\n" + outputFile);
+		Converter.addFile(outputFile);
 	}
 	
 	public String getJson(List<?> value) throws Exception {

@@ -6,7 +6,7 @@ body {
 	line-height: 1.4;
 	display: flex;
 	flex-direction: column;
-	margin: 10px;
+	padding: 10px;
 }
 
 fieldset {
@@ -24,13 +24,84 @@ label {
 
 .top-gap {
 	margin-top: 10px;
+	min-height: 30px;
 }
 
-.disabled {
-	color: gray;
+.container, table {
+	width: 100%;
+	height: 100%;
+}
+
+td:nth-child(1) {
+	width: auto;
+	white-space: nowrap;
+}
+
+td:nth-child(2) {
+	width: 100%;
+	padding: 5px;
+
+	&> * {
+		width: 100%;
+	}
+}
+
+.preview {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 40%;
+	float: right;
+
+	#preview {
+		height: 100%;
+		overflow: auto;
+		border: 1px solid #ccc;
+		padding: 5px;
+	}
+}
+
+.wait_overlay {
+	.overlay();
+	cursor: wait;
+}
+
+.controls {
+	width: 60%;
+}
+
+.step.disabled {
+	&>h1 {
+		color: gray;
+	}
+	&>div {
+		display: none;
+	}
 }
 
 .step1 .file span {
 	vertical-align: bottom;
 	margin-left: 15px;
+}
+
+.dlgSwagger [_=igoDialog] {
+	&>div {
+		width: 600px;
+	}
+	section {
+		padding: 10px;
+	}
+
+	.fileName {
+		display: inline-block;
+		padding: 5px;
+		height: 25px;
+	}
+}
+
+#properties [_=igoFile], #properties [_=igoFile] * {
+	width: 100%;
+	border-bottom: none;
+	color: inherit;
+	margin-top: 0;
 }

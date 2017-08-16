@@ -161,6 +161,10 @@
 		return ns;
 	};
 	ig.watch = function(model, watch) {
+		if (typeof model === 'function') {
+			watch = model;
+			model = {};
+		};
 		watch = watch || function() {
 			if (watch) {
 				watch.apply(ig, arguments);

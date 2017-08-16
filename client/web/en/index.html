@@ -8,32 +8,97 @@
 <%- $link('/css/index') %>
 
 <script src="<%- baseStaticPath %>/js/vendor/require-2.3.2<%- extJS %>"></script>
-<link rel="shortcut icon" href="<%- baseStaticPath %>/favicon.ico">
+<link rel="shortcut icon" href="<%- baseStaticPath %>/favicon.ico"/>
+
+<script type="text/template" id="tmplNewSwagger">
+	<p class="bold"><%- locales.common.option1 %></p>
+	<%- $('igoHbox', {left: `<label>${locales.common.url}</label>`, content: $('igoInput')} ) %>
+	<p class="bold top-gap"><%- locales.common.option2 %></p>
+	<%- $('igoFile', {label: `${locales.common.uploadFile}`}) %>
+	<div class="fileName"></div>
+</script>
+
 </head>
 <body>
-	<div class="step1">
-		<h1><%- locales.common.step1 %></h1>
-		<fieldset>
-			<p class="bold"><%- locales.common.option1 %></p>
-			<%- $('igoHbox', {left: `<label>${locales.common.url}</label>`, content: $('igoInput')} ) %>
-			<p class="bold top-gap"><%- locales.common.option2 %></p>
-			<div class="file">
-				<%- $('igoFile', {label: `${locales.common.uploadFile}`}) %>
-				<span></span>
+	<div class="container">
+		<div class="preview">
+			<h3><%- locales.common.preview %></h3>
+			<pre id="preview"></pre>
+		</div>
+		<div class="controls">
+			<div class="step step1">
+				<h1><%- locales.common.step1 %></h1>
+				<table>
+					<tr>
+						<td><%- locales.common.projectName %></td>
+						<td><%- $('igoInput', {id: 'name'}) %></td>
+					</tr>
+					<tr>
+						<td><%- locales.common.swagger %></td>
+						<td><%- $('igoDropdown', {id: 'swagger', menus: [locales.common.uploadSwagger], prompt: locales.common.swaggerPrompt}) %></td>
+					</tr>
+					<tr>
+						<td><%- locales.common.properties %></td>
+						<td><%- $('igoDropdown', {id: 'properties', menus: [locales.common.uploadProperties], itemRenderer: function(menu, opts, defaultItemRenderer, index) {
+							return `<li>${$('igoFile', {id: 'uploadProperties', label: '%LABEL%'})}</li>`;
+						}, prompt: locales.common.propertiesPrompt}) %></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<%- $('igoCheckbox', {id: 'schemas', checked: true, label: locales.common.generateSchemas}) %>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<%- $('igoCheckbox', {id: 'tests', checked: true, label: locales.common.generateTests}) %>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="pull-right top-gap">
+								<%- $('igoButton', {id: 'compile', label: `${locales.common.compile}`}) %>
+							</div>
+						</td>
+					</tr>
+				</table>
 			</div>
-			<div class="pull-right">
-				<%- $('igoButton', {label: `${locales.common.submit}`} ) %>
+
+			<div class="step step2 disabled">
+				<h1><%- locales.common.step2 %></h1>
+				<div>
+					<h3><%- locales.common.selectTarget %></h3>
+					<%- $('igoDropdown', {selectedIndex: 0, menus: [
+						{label: locales.common.soapUI, data: 'SOAP'},
+						{label: locales.common.readyAPI, data: 'READY'},
+						{label: locales.common.postman, data: 'POSTMAN'},
+						{label: locales.common.mocha, data: 'MOCHA'},
+						{label: locales.common.swagger, data: 'SWAGGER'}
+					]}) %>
+					<div class="top-gap">
+						<%- $('igoCheckbox', {id: 'tests', checked: true, label: locales.common.includeResources}) %>
+					</div>
+					<div class="top-gap">
+						<%- $('igoButton', {id: 'export', label: `${locales.common.export}`, class: 'pull-right'}) %>
+					</div>
+				</div>
 			</div>
-		</fieldset>
+
+			<div class="step step3 disabled">
+				<h1><%- locales.common.step3 %></h1>
+				<div></div>
+			</div>
+		</div>
 	</div>
 
-	<div class="step2">
-		<h1 class="disabled"><%- locales.common.step2 %></h1>
+
+	<div class="dlgSwagger">
+		<%- $('igoDialog', {title: `${locales.common.uploadSwagger}`, content_template: '#tmplNewSwagger',
+			buttons: [{label: `${locales.common.submit}`, id: 'submit'}, {label: `${locales.common.cancel}`, class: 'close'}]}) %>
 	</div>
 
-	<div class="step3">
-		<h1 class="disabled"><%- locales.common.step3 %></h1>
-	</div>
+	<div class="wait_overlay"></div>
 
 <%- $finalize(`${baseStaticPath}/js/views/index.js`) %>
 </body>

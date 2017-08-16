@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"main": "index.js",
 	"scripts": {
-		"start": "nodemon . -v=true",
+		"start": "nodemon .",
 		"init_bower": "cd ./web/default/components && npm install --ignore-scripts && grunt --buildPath=../../../build/components",
 		"jshint": "./node_modules/.bin/jshint . --config .jshintrc"
 	},
@@ -11,6 +11,8 @@
 	"dependencies": {
 		"indigojs": "~2.6.6",
 		"body-parser": "latest",
+		"formidable": "latest",
+		"proxy-orchestrator": "latest",
 		"less": "latest"
 	},
 	"devDependencies": {
