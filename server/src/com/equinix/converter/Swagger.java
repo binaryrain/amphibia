@@ -63,7 +63,7 @@ public class Swagger {
 		writer.println(getJson(output.toString()));
 		writer.close();
 		LOGGER.debug("The test file saved successfully.\n" + outputFile);
-		Converter.addFile(outputFile);
+		Converter.addFile(Converter.ADD_PROJECT, outputFile);
 	}
 	
 	public String getJson(List<?> value) throws Exception {

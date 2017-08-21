@@ -68,7 +68,7 @@ module.exports = function(router) {
 	});
 
 	router.post('/compile', function(req, res) {
-		let args = ['-l=true'],
+		let args = ['-j=true'],
 			cmd;
 		for (var key in req.body) {
 			args.push(`${key}=${req.body[key]}`);
@@ -80,8 +80,9 @@ module.exports = function(router) {
 				console.error('exec error: ' + error);
 				res.status(400).send(stderr);
 			} else {
-				console.log('stdout: \n' + stdout);
-				res.send(stdout);
+				const json = JSON.parse(stdout);
+				console.log(json);
+				res.json(json);
 			}
 		});
 	});

@@ -41,7 +41,7 @@ window.indigoMain(function($, indigo) {
 						model.url = null;
 						span.text(value);
 					}
-					step1Model['-i'] = value;
+					step1Model['-i'] = value || '';
 					submitButton.disabled = !(model.file || model.url);
 				})
 				.bind('url', 'value', ns.create('Input')).trigger('keydown keyup')
@@ -103,8 +103,9 @@ window.indigoMain(function($, indigo) {
 					setTimeout(function() {propertiesDropdown.open = false;}, 500);
 				};
 
-				indigo.bind(step1Model, '-s', 'checked', ns.create('Checkbox', '#schemas'))
-						.bind('tests', '-t', ns.create('Checkbox', '#tests'))
+				indigo.bind(step1Model, '-s', 'checked', ns.create('Checkbox', '#schemas'), function(value, name, model) {
+					console.log(value, name, model)
+				}).bind('-t', 'checked', ns.create('Checkbox', '#tests'))
 
 				ns.create('Button', '#compile').click = function() {
 					step1Model['-n'] = projectName.value;
@@ -112,8 +113,8 @@ window.indigoMain(function($, indigo) {
 						if (err) {
 							txtPreview.html(err);
 						} else {
-							txtPreview.html(data);
-							projectFile = data.trim().split('\n').pop();
+							txtPreview.html(JSON.stringify(data, null, 2));
+							projectFile = data.projects[0];
 							$('.step2').removeClass('disabled');
 						}
 					}, '/compile', step1Model);

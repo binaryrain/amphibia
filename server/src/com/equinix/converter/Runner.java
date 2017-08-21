@@ -59,7 +59,7 @@ public class Runner {
 		writer.println(swagger.getJson(json));
 		writer.close();
 		LOGGER.debug("The schena file saved successfully.\n" + outputFile);
-		Converter.addFile(outputFile);
+		Converter.addFile(Converter.ADD_TEST, outputFile);
 		return swagger.getPath(path) + "/" + fileName;
 	}
 
@@ -182,8 +182,8 @@ public class Runner {
 	protected Map<String, Object> addStep(String fileName, JSONObject api, Map<Object, Object> body) throws Exception {
 		Map<String, Object> step = new LinkedHashMap<String, Object>();
 
-		Object requestBody = Swagger.NULL;
-		Object requestSchema = Swagger.NULL;
+		Object requestBody = null;
+		Object requestSchema = null;
 		if (api.containsKey("parameters")) {
 			JSONArray parameters = api.getJSONArray("parameters");
 			for (Object obj : parameters) {
@@ -208,8 +208,8 @@ public class Runner {
 		}
 		
 		Map<Object, Object> responseProperties = new LinkedHashMap<Object, Object>();
-		Object responseBody = Swagger.NULL;
-		Object responseSchema = Swagger.NULL;
+		Object responseBody = null;
+		Object responseSchema = null;
 		Object responseAsserts = new ArrayList<Object>();
 		if (api.containsKey("responses")) {
 			JSONObject responses = api.getJSONObject("responses");
@@ -240,12 +240,12 @@ public class Runner {
 		step.put("tag", api.getString("operationId"));
 		step.put("request", ImmutableMap.<String, Object>builder()
 				.put("properties", new LinkedHashMap<Object, Object>())
-				.put("body", requestBody)
-				.put("schema", requestSchema).build());
+				.put("body", requestBody == null ? Swagger.NULL : requestBody)
+				.put("schema", requestSchema == null ? Swagger.NULL : requestSchema).build());
 		step.put("response", ImmutableMap.<String, Object>builder()
 				.put("properties", responseProperties)
-				.put("body", responseBody)
-				.put("schema", responseSchema)
+				.put("body", responseBody == null ? Swagger.NULL : responseBody)
+				.put("schema", responseSchema == null ? Swagger.NULL : responseSchema)
 				.put("asserts", responseAsserts).build());
 		return step;
 	}
